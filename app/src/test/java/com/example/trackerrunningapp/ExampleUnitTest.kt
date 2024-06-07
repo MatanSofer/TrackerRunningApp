@@ -1,4 +1,4 @@
-package com.example.trackerrunningapp
+package com.matans.trackerrunningapp
 
 import org.junit.Test
 

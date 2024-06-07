@@ -1,4 +1,4 @@
-package com.example.trackerrunningapp.ui.theme
+package com.matans.trackerrunningapp.ui.theme
 
 import android.app.Activity
 import android.os.Build

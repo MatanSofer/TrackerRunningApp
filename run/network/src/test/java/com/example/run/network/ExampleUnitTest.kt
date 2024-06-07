@@ -1,4 +1,4 @@
-package com.example.run.network
+package com.matans.run.network
 
 import org.junit.Test
 

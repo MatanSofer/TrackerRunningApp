@@ -1,4 +1,4 @@
-package com.example.trackerrunningapp.ui.theme
+package com.matans.trackerrunningapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
