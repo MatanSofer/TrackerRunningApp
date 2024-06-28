@@ -19,6 +19,9 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
+gradle.startParameter.excludedTaskNames.addAll(listOf(":build-logic:convention:testClasses"))
+
 rootProject.name = "TrackerRunningApp"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(":app")
