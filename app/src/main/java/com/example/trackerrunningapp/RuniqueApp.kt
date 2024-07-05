@@ -4,6 +4,7 @@ import android.app.Application
 import com.example.trackerrunningapp.di.appModule
 import com.matans.auth.data.di.authDataModule
 import com.matans.auth.presentation.di.authViewModelModule
+import com.matans.core.data.di.coreDataModule
 
 import com.matans.trackerrunningapp.BuildConfig
 import org.koin.android.ext.koin.androidContext
@@ -25,7 +26,8 @@ class RuniqueApp: Application() {
             modules(
                 authDataModule,
                 authViewModelModule,
-                appModule
+                appModule,
+                coreDataModule
             )
         }
     }
