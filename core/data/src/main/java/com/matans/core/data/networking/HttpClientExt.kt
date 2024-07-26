@@ -67,10 +67,11 @@ suspend inline fun <reified T> safeCall(execute: () -> HttpResponse): Result<T, 
         e.printStackTrace()
         return Result.Error(DataError.Network.SERIALIZATION)
     } catch(e: Exception) {
-        if(e is CancellationException) throw e //for coroutine cancel
+        if(e is CancellationException) throw e
         e.printStackTrace()
         return Result.Error(DataError.Network.UNKNOWN)
     }
+
     return responseToResult(response)
 }
 
