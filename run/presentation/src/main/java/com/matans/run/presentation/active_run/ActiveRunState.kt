@@ -1,5 +1,6 @@
 package com.matans.run.presentation.active_run
 
+import android.text.BoringLayout
 import com.matans.core.doamin.location.Location
 import com.matans.run.domain.RunData
 import kotlin.time.Duration
@@ -12,5 +13,7 @@ data class ActiveRunState(
     val hasStartedRunning: Boolean = false,
     val currentLocation: Location? = null,
     val isRunFinished: Boolean = false,
-    val isSavingRun: Boolean = false
+    val isSavingRun: Boolean = false,
+    val showLocationRationale: Boolean = false,
+    val showNotificationRationale: Boolean = false
 )
