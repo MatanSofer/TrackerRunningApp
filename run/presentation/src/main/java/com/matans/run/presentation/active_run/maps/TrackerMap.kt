@@ -88,6 +88,7 @@ fun TrackerMap(
             zoomControlsEnabled = false
         )
     ){
+        RuniquePolylines(locations = location)
         if(!isRunFinished && currentLocation != null){
             MarkerComposable(
                 currentLocation,
