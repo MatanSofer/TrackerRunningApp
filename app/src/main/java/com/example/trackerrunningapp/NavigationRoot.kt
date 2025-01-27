@@ -2,16 +2,20 @@ package com.example.trackerrunningapp
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
 import com.matans.auth.presentation.intro.IntroScreenRoot
 import com.matans.auth.presentation.login.LoginScreenRoot
 import com.matans.auth.presentation.register.RegisterScreenRoot
 import com.matans.run.presentation.active_run.ActiveRunScreenRoot
+import com.matans.run.presentation.active_run.service.ActiveRunService
 import com.matans.run.presentation.run_overview.RunOverviewScreenRoot
+import com.matans.trackerrunningapp.MainActivity
 
 @Composable
 fun NavigationRoot(
@@ -89,8 +93,28 @@ private fun NavGraphBuilder.runGraph(navController: NavHostController) {
                 onStartRunClick = { navController.navigate("active_run")}
             )
         }
-        composable("active_run"){
-            ActiveRunScreenRoot()
+        composable(
+            route = "active_run",
+            deepLinks = listOf(
+               navDeepLink {
+                   uriPattern = "runique://active_run"
+               }
+            )
+        ){
+            val context = LocalContext.current
+            ActiveRunScreenRoot(
+                onServiceToggle = { shouldServiceRun ->
+                    if(shouldServiceRun){
+
+
+                    }
+                    else {
+                        context.startService(ActiveRunService.createStopIntent(
+                            context = context
+                        ))
+                    }
+                }
+            )
         }
     }
 }

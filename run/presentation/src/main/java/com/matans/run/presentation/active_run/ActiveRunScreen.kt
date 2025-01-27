@@ -33,6 +33,7 @@ import com.matans.core.presentation.designsystem.components.RuniqueToolbar
 import com.matans.run.presentation.R
 import com.matans.run.presentation.active_run.components.RunDataCard
 import com.matans.run.presentation.active_run.maps.TrackerMap
+import com.matans.run.presentation.active_run.service.ActiveRunService
 import com.matans.run.presentation.util.hasLocationPermission
 import com.matans.run.presentation.util.hasNotificationPermission
 import com.matans.run.presentation.util.shouldShowLocationPermissionRationale
@@ -41,10 +42,12 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ActiveRunScreenRoot(
-    viewModel: ActiveRunViewModel = koinViewModel(),
+    onServiceToggle: (isServiceRunning: Boolean) -> Unit,
+    viewModel: ActiveRunViewModel = koinViewModel()
 ) {
     ActiveRunScreen(
         state = viewModel.state,
+        onServiceToggle = onServiceToggle,
         onAction = viewModel::onAction
     )
 }
@@ -53,6 +56,7 @@ fun ActiveRunScreenRoot(
 @Composable
 private fun ActiveRunScreen(
     state: ActiveRunState,
+    onServiceToggle: (isServiecRunning: Boolean) -> Unit,
     onAction: (ActiveRunAction) -> Unit
 ) {
     val context = LocalContext.current
@@ -104,6 +108,20 @@ private fun ActiveRunScreen(
             permissionLauncher.requestRuniquePermissions(context)
         }
     }
+    LaunchedEffect(key1 = state.isRunFinished){
+        if (state.isRunFinished){
+            onServiceToggle(false)
+        }
+    }
+
+    LaunchedEffect (
+        key1 = state.shouldTrack
+    ){
+        if (context.hasLocationPermission() && state.shouldTrack && !ActiveRunService.isServiceActive){
+            onServiceToggle(true)
+        }
+    }
+
     RuniqueScaffold(
         widthGradient = false,
         topAppBar = {
@@ -246,6 +264,7 @@ private fun ActiveRunScreenPreview() {
     RuniqueTheme {
         ActiveRunScreen(
             state = ActiveRunState(),
+            onServiceToggle = {},
             onAction = {}
         )
     }
