@@ -105,8 +105,10 @@ private fun NavGraphBuilder.runGraph(navController: NavHostController) {
             ActiveRunScreenRoot(
                 onServiceToggle = { shouldServiceRun ->
                     if(shouldServiceRun){
-
-
+                        context.startService(ActiveRunService.createStartIntent(
+                            context = context,
+                            activityClass = MainActivity::class.java
+                        ))
                     }
                     else {
                         context.startService(ActiveRunService.createStopIntent(
