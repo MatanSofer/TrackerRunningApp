@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.trackerrunningapp.android.feature.ui)
+    alias(libs.plugins.mapsplatform.secrets.plugin)
+
 }
 
 android {

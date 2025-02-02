@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.trackerrunningapp.android.application.compose)
     alias(libs.plugins.trackerrunningapp.jvm.ktor)
-    alias(libs.plugins.mapsplatform.secrets.plugin)
+//    alias(libs.plugins.mapsplatform.secrets.plugin)
 //    id("trackerrunningapp.android.application")
 }
 
