@@ -5,6 +5,7 @@ import com.example.trackerrunningapp.di.appModule
 import com.matans.auth.data.di.authDataModule
 import com.matans.auth.presentation.di.authViewModelModule
 import com.matans.core.data.di.coreDataModule
+import com.matans.core.database.di.databaseModule
 import com.matans.run.location.di.locationModule
 import com.matans.run.presentation.di.runPresentationModule
 
@@ -33,7 +34,8 @@ class RuniqueApp: Application() {
                 appModule,
                 coreDataModule,
                 runPresentationModule,
-                locationModule
+                locationModule,
+                databaseModule
             )
         }
     }
