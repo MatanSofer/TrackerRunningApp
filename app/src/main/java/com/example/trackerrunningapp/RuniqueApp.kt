@@ -1,6 +1,7 @@
 package com.example.trackerrunningapp
 
 import android.app.Application
+import com.example.run.network.di.networkModule
 import com.example.trackerrunningapp.di.appModule
 import com.matans.auth.data.di.authDataModule
 import com.matans.auth.presentation.di.authViewModelModule
@@ -35,7 +36,8 @@ class RuniqueApp: Application() {
                 coreDataModule,
                 runPresentationModule,
                 locationModule,
-                databaseModule
+                databaseModule,
+                networkModule
             )
         }
     }

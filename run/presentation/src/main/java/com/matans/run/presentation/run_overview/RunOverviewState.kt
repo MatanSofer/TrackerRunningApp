@@ -1,5 +1,7 @@
 package com.matans.run.presentation.run_overview
 
+import com.matans.run.presentation.run_overview.model.RunUi
+
 data class RunOverviewState(
-    val a: String = ""
+   val runs: List<RunUi> = emptyList()
 )
