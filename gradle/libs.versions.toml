@@ -123,6 +123,7 @@ trackerrunningapp-android-library = { id = "trackerrunningapp.android.library", 
 trackerrunningapp-android-library-compose = { id = "trackerrunningapp.android.library.compose", version = "unspecified"}
 trackerrunningapp-android-feature-ui = { id = "trackerrunningapp.android.feature.ui", version = "unspecified"}
 trackerrunningapp-android-room = { id = "trackerrunningapp.android.room", version = "unspecified"}
+trackerrunningapp-android-dynamic-feature = { id = "trackerrunningapp.android.dynamic.feature", version = "unspecified"}
 trackerrunningapp-jvm-library = { id = "trackerrunningapp.jvm.library", version = "unspecified"}
 trackerrunningapp-jvm-ktor = { id = "trackerrunningapp.jvm.ktor", version = "unspecified"}
 
