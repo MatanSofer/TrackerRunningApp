@@ -7,6 +7,7 @@ import com.matans.core.doamin.run.RemoteRunDatasource
 import com.matans.core.doamin.run.Run
 import com.matans.core.doamin.run.RunId
 import com.matans.core.doamin.run.RunRepository
+import com.matans.core.doamin.run.SyncRunScheduler
 import com.matans.core.doamin.util.DataError
 import com.matans.core.doamin.util.EmptyResult
 import com.matans.core.doamin.util.asEmptyDataResult
@@ -24,17 +25,16 @@ class OfflineFirstRunRepository(
     private val remoteRunDataSource: RemoteRunDatasource,
     private val applicationScope: CoroutineScope,
     private val runPendingSyncDao: RunPendingSyncDao,
-    private val sessionStorage: SessionStorage
-
-
-): RunRepository {
+    private val sessionStorage: SessionStorage,
+    private val syncRunScheduler: SyncRunScheduler
+) : RunRepository {
 
     override fun getRuns(): Flow<List<Run>> {
         return localRunDataSource.getRuns()
     }
 
     override suspend fun fetchRuns(): EmptyResult<DataError> {
-        return when(val result = remoteRunDataSource.getRuns()) {
+        return when (val result = remoteRunDataSource.getRuns()) {
             is Result.Error -> result.asEmptyDataResult()
             is Result.Success -> {
                 applicationScope.async {
@@ -46,7 +46,7 @@ class OfflineFirstRunRepository(
 
     override suspend fun upsertRun(run: Run, mapPicture: ByteArray): EmptyResult<DataError> {
         val localResult = localRunDataSource.upsertRun(run)
-        if(localResult !is Result.Success) {
+        if (localResult !is Result.Success) {
             return localResult.asEmptyDataResult()
         }
 
@@ -56,10 +56,19 @@ class OfflineFirstRunRepository(
             mapPicture = mapPicture
         )
 
-        return when(remoteResult) {
+        return when (remoteResult) {
             is Result.Error -> {
+                applicationScope.launch {
+                    syncRunScheduler.scheduleSync(
+                        type = SyncRunScheduler.SyncType.CreateRun(
+                            run = runWithId,
+                            mapPictureBytes = mapPicture
+                        )
+                    )
+                }.join()
                 Result.Success(Unit)
             }
+
             is Result.Success -> {
                 applicationScope.async {
                     localRunDataSource.upsertRun(remoteResult.data).asEmptyDataResult()
@@ -75,7 +84,7 @@ class OfflineFirstRunRepository(
         // and then deleted in offline-mode as well. In that case,
         // we don't need to sync anything.
         val isPendingSync = runPendingSyncDao.getRunPendingSyncEntity(id) != null
-        if(isPendingSync) {
+        if (isPendingSync) {
             runPendingSyncDao.deleteRunPendingSyncEntity(id)
             return
         }
@@ -83,6 +92,16 @@ class OfflineFirstRunRepository(
         val remoteResult = applicationScope.async {
             remoteRunDataSource.deleteRun(id)
         }.await()
+
+        if (remoteResult is Result.Error) {
+            applicationScope.launch {
+                syncRunScheduler.scheduleSync(
+                    type = SyncRunScheduler.SyncType.DeleteRun(
+                        id
+                    )
+                )
+            }.join()
+        }
     }
 
     override suspend fun syncPendingRuns() {
@@ -101,7 +120,7 @@ class OfflineFirstRunRepository(
                 .map {
                     launch {
                         val run = it.run.toRun()
-                        when(remoteRunDataSource.postRun(run, it.mapPictureBytes)) {
+                        when (remoteRunDataSource.postRun(run, it.mapPictureBytes)) {
                             is Result.Error -> Unit
                             is Result.Success -> {
                                 applicationScope.launch {
@@ -115,7 +134,7 @@ class OfflineFirstRunRepository(
                 .await()
                 .map {
                     launch {
-                        when(remoteRunDataSource.deleteRun(it.runId)) {
+                        when (remoteRunDataSource.deleteRun(it.runId)) {
                             is Result.Error -> Unit
                             is Result.Success -> {
                                 applicationScope.launch {
