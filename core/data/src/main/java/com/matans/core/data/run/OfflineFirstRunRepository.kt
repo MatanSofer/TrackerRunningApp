@@ -1,5 +1,6 @@
 package com.matans.core.data.run
 
+import com.matans.core.data.networking.get
 import com.matans.core.database.dao.RunPendingSyncDao
 import com.matans.core.database.mappers.toRun
 import com.matans.core.doamin.run.LocalRunDataSource
@@ -15,6 +16,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import com.matans.core.doamin.util.Result
 import com.matans.core.doamin.util.SessionStorage
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerAuthProvider
+import io.ktor.client.plugins.plugin
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -26,7 +31,8 @@ class OfflineFirstRunRepository(
     private val applicationScope: CoroutineScope,
     private val runPendingSyncDao: RunPendingSyncDao,
     private val sessionStorage: SessionStorage,
-    private val syncRunScheduler: SyncRunScheduler
+    private val syncRunScheduler: SyncRunScheduler,
+    private val client: HttpClient
 ) : RunRepository {
 
     override fun getRuns(): Flow<List<Run>> {
@@ -148,5 +154,21 @@ class OfflineFirstRunRepository(
             createJobs.forEach { it.join() }
             deleteJobs.forEach { it.join() }
         }
+    }
+
+    override suspend fun deleteAllRuns() {
+        localRunDataSource.deleteAllRuns()
+    }
+
+    override suspend fun logout(): EmptyResult<DataError.Network> {
+        val result = client.get<Unit>(
+            route = "/logout"
+        ).asEmptyDataResult()
+
+        client.plugin(Auth).providers.filterIsInstance<BearerAuthProvider>()
+            .firstOrNull()
+            ?.clearToken()
+
+        return result
     }
 }
