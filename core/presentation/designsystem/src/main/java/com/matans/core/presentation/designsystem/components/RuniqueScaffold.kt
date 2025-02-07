@@ -11,7 +11,7 @@ fun RuniqueScaffold(
     modifier: Modifier = Modifier,
     widthGradient: Boolean = true,
     topAppBar: @Composable () -> Unit ={},
-    floatingActionButton: @Composable () -> Unit,
+    floatingActionButton: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold (
