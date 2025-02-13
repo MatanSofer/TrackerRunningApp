@@ -2,6 +2,7 @@ package com.matans.core.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.matans.core.database.dao.AnalyticsDao
 import com.matans.core.database.dao.RunDao
 import com.matans.core.database.dao.RunPendingSyncDao
 import com.matans.core.database.entity.DeletedRunSyncEntity
@@ -21,4 +22,5 @@ abstract class RunDatabase : RoomDatabase() {
 
     abstract val runDao: RunDao
     abstract val runPendingSyncDao: RunPendingSyncDao
+    abstract val analyticsDao: AnalyticsDao
 }

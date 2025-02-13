@@ -1,8 +1,10 @@
 package com.example.trackerrunningapp
 
 import android.app.Application
+import android.content.Context
 import com.example.run.network.di.networkModule
 import com.example.trackerrunningapp.di.appModule
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.matans.auth.data.di.authDataModule
 import com.matans.auth.presentation.di.authViewModelModule
 import com.matans.core.data.di.coreDataModule
@@ -44,5 +46,10 @@ class RuniqueApp: Application() {
                 runDataModule,
             )
         }
+    }
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        SplitCompat.installActivity(this)
     }
 }
